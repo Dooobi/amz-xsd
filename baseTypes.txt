@@ -1,0 +1,6 @@
+xsd:normalizedString
+xsd:string
+xsd:decimal
+xsd:positiveInteger
+xsd:nonNegativeInteger
+xsd:integer
