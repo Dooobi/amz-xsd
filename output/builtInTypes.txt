@@ -1,0 +1,9 @@
+xsd:normalizedString
+xsd:string
+xsd:boolean
+xsd:positiveInteger
+xsd:decimal
+xsd:dateTime
+xsd:nonNegativeInteger
+xsd:date
+xsd:integer

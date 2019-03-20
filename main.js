@@ -5,42 +5,36 @@ let parser = new XsdParser('Beauty.xsd');
 
 parser.parse();
 
-let elementEntries = [['Name', 'Ref', 'Type', 'SourceSchema']];
+let namedElements = parser.parseSelection('xsd\\:element[name]', { withIncludes: true });
+
+let elementEntries = [['Name', 'Type', 'SourceSchema']];
 let typeEntries = [['Name', 'SourceSchema']];
 
-let elementKeys = Object.keys(parser.elements);
-for (let i = 0; i < elementKeys.length; i++) {
-    let element = parser.elements[elementKeys[i]];
+let attributeDefinitionInserts = [];
+
+for (let element of namedElements) {
     let line = [];
 
+    if (element.name === "Ingredients") {
+        console.log();
+    }
+
     line.push(element.name);
-    line.push(element.ref);
     line.push(element.type);
     line.push(element.sourceSchema);
 
     elementEntries.push(line.join("\t"));
+
+    attributeDefinitionInserts.push(generateAttributeDefinitionInsert(element));
 }
 
-let typeKeys = Object.keys(parser.types);
-for (let i = 0; i < typeKeys.length; i++) {
-    let type = parser.types[typeKeys[i]];
-    let line = [];
+fs.writeFileSync('output/elements.tsv', elementEntries.join("\n"));
+// fs.writeFileSync('output/types.tsv', typeEntries.join("\n"));
+// fs.writeFileSync('output/notHandledTags.txt', parser.notHandledTags.join("\n"));
+fs.writeFileSync('output/builtInTypes.txt', parser.builtInTypes.join("\n"));
 
-    line.push(type.name);
-    line.push(type.sourceSchema);
+fs.writeFileSync('output/attributeDefinitions.sql', attributeDefinitionInserts.join("\n"));
 
-    typeEntries.push(line.join("\t"));
+function generateAttributeDefinitionInsert (element) {
+    return `INSERT INTO "ATTRIBUTE_DEFINITION" ("ATTRIBUTE_DEFINITION_ID") VALUES ("${element.name}");`;
 }
-
-fs.writeFileSync('elements.tsv', elementEntries.join("\n"));
-fs.writeFileSync('types.tsv', typeEntries.join("\n"));
-fs.writeFileSync('notHandledTags.txt', parser.notHandledTags.join("\n"));
-fs.writeFileSync('baseTypes.txt', parser.baseTypes.join("\n"));
-
-// function elementOutputWriter (element, type) {
-//     return `INSERT INTO "ATTRIBUTE_DEFINITION" (${type})`;
-// }
-
-// function skipElementOutputCallback (element) {
-
-// }
